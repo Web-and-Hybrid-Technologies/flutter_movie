@@ -11,7 +11,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return  MaterialApp(
-      title: 'Startup Name Generator',
+      title: 'Movies to watch ASAP',
       theme: ThemeData(          // Add the 5 lines from here... 
         appBarTheme: const AppBarTheme(
           backgroundColor: Colors.white,
@@ -92,7 +92,7 @@ class _RandomWordsState extends State<RandomWords> {
 
           return Scaffold(
             appBar: AppBar(
-              title: const Text('Saved Suggestions'),
+              title: const Text('Favorites'),
             ),
             body: ListView(children: divided),
           );
@@ -104,12 +104,17 @@ class _RandomWordsState extends State<RandomWords> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Startup Name Generator'),
+        title: const Text('Movies to watch ASAP'),
+        leading: Container(
+          child: Image.asset('assets/flutter_logo.png',
+          fit: BoxFit.cover
+          ),
+        ),
         actions: [
           IconButton(
             icon: const Icon(Icons.list),
             onPressed: _pushSaved,
-            tooltip: 'Saved Suggestions',
+            tooltip: 'Favorites',
           ),
         ],
       ),
