@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 void main() {
   runApp(const MyApp());
 }
-
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
@@ -12,7 +11,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return  MaterialApp(
       title: 'Movies to watch ASAP',
-      theme: ThemeData(          // Add the 5 lines from here... 
+      theme: ThemeData(       
         appBarTheme: const AppBarTheme(
           backgroundColor: Colors.white,
           foregroundColor: Colors.black,
@@ -20,7 +19,7 @@ class MyApp extends StatelessWidget {
       ),
       home: const RandomWords(),
     );
-  }
+  } 
 }
 
 class _RandomWordsState extends State<RandomWords> {
