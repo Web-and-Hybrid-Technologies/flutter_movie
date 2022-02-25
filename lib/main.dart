@@ -1,130 +1,65 @@
-import 'package:english_words/english_words.dart';
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_project/models/movie.dart';
+import 'package:flutter_project/widgets/moviesWidget.dart';
+import 'package:http/http.dart' as http;
 
 void main() {
   runApp(const MyApp());
 }
-class MyApp extends StatelessWidget {
+
+class MyApp extends StatefulWidget {
   const MyApp({Key? key}) : super(key: key);
 
+
   @override
-  Widget build(BuildContext context) {
-    return  MaterialApp(
-      title: 'Movies to watch ASAP',
-      theme: ThemeData(       
-        appBarTheme: const AppBarTheme(
-          backgroundColor: Colors.white,
-          foregroundColor: Colors.black,
-        ),
-      ),
-      home: const RandomWords(),
-    );
-  } 
+  _App createState() => _App();
 }
 
-class _RandomWordsState extends State<RandomWords> {
-  final _suggestions = <WordPair>[];
-  final _saved = <WordPair>{};
+class _App extends State<MyApp>{
+
+  List<Movie> _movies = <Movie>[];
+  final _saved = <Movie>{};
   final _biggerFont = const TextStyle(fontSize: 18);
 
-  Widget _buildSuggestions() {
-    return ListView.builder(
-      padding: const EdgeInsets.all(16),
-      itemBuilder: (context, i) {
-        if (i.isOdd) {
-          return const Divider(); 
-        }
+@override
+  void initState() {
+    super.initState();
+    _populateAllMovies();
+  }
 
-        final index = i ~/ 2;
-        if (index >= _suggestions.length) {
-          _suggestions.addAll(generateWordPairs().take(10));
-        }
-        return _buildRow(_suggestions[index]);
-      },
+  void _populateAllMovies() async {
+    final movies = await _fetchAllMovies();
+    setState(() {
+      _movies = movies;
+    }
     );
   }
 
-  Widget _buildRow(WordPair pair) {
-    final alreadySaved = _saved.contains(pair);
-    return ListTile(
-      title: Text(
-        pair.asPascalCase,
-        style: _biggerFont,
-      ),
-      trailing: Icon(   
-        alreadySaved ? Icons.favorite : Icons.favorite_border,
-        color: alreadySaved ? Colors.red : null,
-        semanticLabel: alreadySaved ? 'Remove from saved' : 'Save',
-      ),
-    onTap: () {    
-      setState(() {
-        if (alreadySaved) {
-          _saved.remove(pair);
-        } else { 
-          _saved.add(pair); 
-        } 
-      });
-    },           
-  );
+Future<List<Movie>> _fetchAllMovies() async {
+ final response = await http.get(Uri.parse('https://www.omdbapi.com/?s=love&page=2&apikey=edf8e4ac'));
+
+ if(response.statusCode == 200){
+    final result = jsonDecode(response.body);
+    Iterable list = result["Search"];
+    return list.map((movie) => Movie.fromJson(movie)).toList();
+ } else {
+   throw Exception("Failed to load movies");
+ }
 }
 
-  void _pushSaved() {
-    Navigator.of(context).push(
-      MaterialPageRoute<void>(
-        builder: (context) {
-          final tiles = _saved.map(
-            (pair) {
-              return ListTile(
-                title: Text(
-                  pair.asPascalCase,
-                  style: _biggerFont,
-                ),
-              );
-            },
-          );
-          final divided = tiles.isNotEmpty
-              ? ListTile.divideTiles(
-                  context: context,
-                  tiles: tiles,
-                ).toList()
-              : <Widget>[];
-
-          return Scaffold(
-            appBar: AppBar(
-              title: const Text('Favorites'),
-            ),
-            body: ListView(children: divided),
-          );
-        },
-      ),
-    );
-  }
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Movies to watch ASAP'),
-        leading: Container(
-          child: Image.asset('assets/flutter_logo.png',
-          fit: BoxFit.cover
-          ),
+
+    return MaterialApp(
+      title: 'Movies to watch ASAP',
+      home: Scaffold(
+        appBar: AppBar(
+          title: Text("Movies to watch ASAP")
         ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.list),
-            onPressed: _pushSaved,
-            tooltip: 'Favorites',
-          ),
-        ],
+        body: MoviesWidget(movies: _movies)
       ),
-      body: _buildSuggestions(),
     );
   }
-}
-
-class RandomWords extends StatefulWidget {
-  const RandomWords({Key? key}) : super(key: key);
-
-  @override
-  _RandomWordsState createState() => _RandomWordsState();
 }
