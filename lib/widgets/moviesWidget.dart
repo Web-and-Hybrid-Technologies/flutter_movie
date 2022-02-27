@@ -1,19 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_project/models/movie.dart';
 
-class MoviesWidget extends StatelessWidget {
+class MoviesWidget extends StatefulWidget {
   final List<Movie> movies;
-  final _saved = <Movie>{};
+  const MoviesWidget({Key? key, required this.movies}) : super(key: key);
 
-  MoviesWidget({required this.movies});
+  @override
+  _MoviesWidget createState() => _MoviesWidget();
+}
+
+class _MoviesWidget extends State<MoviesWidget> {
+  final _saved = <Movie>{};
 
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
         padding: const EdgeInsets.all(16),
-        itemCount: movies.length,
+        itemCount: widget.movies.length,
         itemBuilder: (context, index) {
-          final movie = movies[index];
+          final movie = widget.movies[index];
           final alreadySaved = _saved.contains(movie);
           return ListTile(
             title: Text(
@@ -24,7 +29,7 @@ class MoviesWidget extends StatelessWidget {
               color: alreadySaved ? Colors.red : null,
               semanticLabel: alreadySaved ? 'Remove from saved' : 'Save',
             ),
-/*             onTap: () {
+            onTap: () {
               setState(() {
                 if (alreadySaved) {
                   _saved.remove(movie);
@@ -32,7 +37,7 @@ class MoviesWidget extends StatelessWidget {
                   _saved.add(movie);
                 }
               });
-            }, */
+            },
           );
         });
   }

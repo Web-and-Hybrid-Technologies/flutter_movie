@@ -47,8 +47,6 @@ class _App extends State<App> {
     }
   }
   
-
-  
   void _pushSaved() {
     Navigator.of(context).push(
       MaterialPageRoute<void>(
