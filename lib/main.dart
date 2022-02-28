@@ -36,7 +36,7 @@ class _App extends State<App> {
 
   Future<List<Movie>> _fetchAllMovies() async {
     final response = await http.get(
-        Uri.parse('https://www.omdbapi.com/?s=love&page=2&apikey=edf8e4ac'));
+        Uri.parse('https://www.omdbapi.com/?s=love&page=1&apikey=edf8e4ac'));
 
     if (response.statusCode == 200) {
       final result = jsonDecode(response.body);
